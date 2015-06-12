@@ -1,5 +1,6 @@
 module.exports = {
   aggregate:  require('./Aggregate'),
+  alias:      require('./Alias'),
   bin:        require('./Bin'),
   cross:      require('./Cross'),
   linkpath:   require('./LinkPath'),
