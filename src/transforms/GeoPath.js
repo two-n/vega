@@ -35,7 +35,12 @@ prototype.transform = function(input) {
   function set(t) {
     Tuple.set(t, output.path, path(geojson(t)));
     if (centroid) {
-      tuple.set(t, output.centroid, path.centroid(geojson(t)));
+      useableCentroid = path.centroid(geojson(t))
+      if (t.properties.centroid) {
+        useableCentroid = path.projection()(t.properties.centroid)
+      }
+
+      tuple.set(t, output.centroid, useableCentroid);
     }
   }
 
