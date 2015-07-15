@@ -1,8 +1,7 @@
 var Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple'),
+    Tuple = require('vega-dataflow/src/Tuple'),
     expression = require('../parse/expr'),
-    log = require('../util/log'),
-    C = require('../util/constants');
+    log = require('vega-logging')
 
 function Alias(graph) {
   Transform.prototype.init.call(this, graph);
@@ -18,16 +17,16 @@ var proto = (Alias.prototype = new Transform());
 
 proto.transform = function(input) {
   log.debug(input, ["formulating"]);
-  var t = this,
-      g = this._graph,
-      from = this.param("from"),
-      to = this.param("to"),
-      signals = this.dependency(C.SIGNALS);
+
+  var g = this._graph,
+      from = this.param("field"),
+      to = this.param("expr"),
+      signals = g.signalValues(this.dependency(Deps.SIGNALS));
 
   function set(x) {
     var val = x[from].replace(/[!\"\s#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '')
 
-    tuple.set(x, to, val);
+    Tuple.set(x, to, val);
   }
 
   input.add.forEach(set);
@@ -41,6 +40,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Alias;
+
 Alias.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Alias transform",
