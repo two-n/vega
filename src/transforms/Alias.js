@@ -1,4 +1,5 @@
 var Transform = require('./Transform'),
+    Deps = require('vega-dataflow/src/Dependencies'),
     Tuple = require('vega-dataflow/src/Tuple'),
     expression = require('../parse/expr'),
     log = require('vega-logging')
@@ -13,9 +14,11 @@ function Alias(graph) {
   return this;
 }
 
-var proto = (Alias.prototype = new Transform());
+// var proto = (Alias.prototype = new Transform());
+var prototype = (Alias.prototype = Object.create(Transform.prototype));
+prototype.constructor = Alias;
 
-proto.transform = function(input) {
+prototype.transform = function(input) {
   log.debug(input, ["formulating"]);
 
   var g = this._graph,
