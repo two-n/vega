@@ -40,7 +40,7 @@ prototype.transform = function(input) {
         useableCentroid = path.projection()(t.properties.centroid)
       }
 
-      tuple.set(t, output.centroid, useableCentroid);
+      Tuple.set(t, output.centroid, useableCentroid);
     }
   }
 
