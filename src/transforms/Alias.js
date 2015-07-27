@@ -7,7 +7,7 @@ var Transform = require('./Transform'),
 function Alias(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    from: {type: "value"},
+    field: {type: "value"},
     to:  {type: "value"}
   });
 
@@ -22,12 +22,12 @@ prototype.transform = function(input) {
   log.debug(input, ["formulating"]);
 
   var g = this._graph,
-      from = this.param("field"),
-      to = this.param("expr"),
+      field = this.param("field"),
+      to = this.param("to"),
       signals = g.signalValues(this.dependency(Deps.SIGNALS));
 
   function set(x) {
-    var val = x[from].replace(/[!\"\s#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '')
+    var val = x[field].replace(/[!\"\s#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '')
 
     Tuple.set(x, to, val);
   }
@@ -51,7 +51,7 @@ Alias.schema = {
   "type": "object",
   "properties": {
     "type": {"enum": ["alias"]},
-    "from": {
+    "field": {
       "type": "string",
       "description": "The property name to transform."
     },

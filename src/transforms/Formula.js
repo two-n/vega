@@ -29,7 +29,7 @@ prototype.transform = function(input) {
   }
 
   input.add.forEach(set);
-  
+
   if (this.reevaluate(input)) {
     input.mod.forEach(set);
   }
