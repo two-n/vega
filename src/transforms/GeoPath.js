@@ -11,11 +11,13 @@ function GeoPath(graph) {
   Transform.addParameters(this, {
     field: {type: 'field', default: null},
     centroid: {type: "value", default: "false"},
+    bounds: {type: "value", default: "false"}
   });
 
   this._output = {
     "path": "layout_path",
-    "centroid": "layout_centroid"
+    "centroid": "layout_centroid",
+    "bounds": "layout_bounds"
   };
   return this;
 }
@@ -29,18 +31,26 @@ prototype.transform = function(input) {
   var output = this._output,
       geojson = this.param('field').accessor || util.identity,
       proj = Geo.d3Projection.call(this),
-      path = d3.geo.path().projection(proj);
-      centroid = this.param("centroid");
+      path = d3.geo.path().projection(proj),
+      centroid = this.param("centroid"),
+      bounds = this.param("bounds");
 
   function set(t) {
     Tuple.set(t, output.path, path(geojson(t)));
     if (centroid) {
-      useableCentroid = path.centroid(geojson(t))
+      useableCentroid = path.centroid(geojson(t));
       if (t.properties.centroid) {
-        useableCentroid = path.projection()(t.properties.centroid)
+        useableCentroid = path.projection()(t.properties.centroid);
       }
 
       Tuple.set(t, output.centroid, useableCentroid);
+    }
+    if (bounds) {
+      useableBounds = path.bounds(geojson(t));
+      if (t.properties.bounds) {
+        useableBounds = [path.projection()(t.properties.bounds[0]),path.projection()(t.properties.bounds[1])];
+      }
+      Tuple.set(t, output.bounds, useableBounds);
     }
   }
 
@@ -53,6 +63,9 @@ prototype.transform = function(input) {
   input.fields[output.path] = 1;
   if (centroid) {
     input.fields[output.centroid] = 1;
+  }
+  if (bounds) {
+    input.fields[output.bounds] = 1;
   }
   return input;
 };
